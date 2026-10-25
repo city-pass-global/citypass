@@ -1,0 +1,7 @@
+node_modules
+.next
+package-lock.json
+supabase
+previews
+playwright-report
+test-results

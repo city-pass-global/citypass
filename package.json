@@ -1,0 +1,63 @@
+{
+  "name": "iguazu-passport",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/run-app.mjs dev",
+    "build": "next build",
+    "start": "node scripts/run-app.mjs start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:db": "node --import tsx scripts/test-db.ts",
+    "test:connected": "node --env-file=.env.local scripts/test-connected.mjs",
+    "activity:worker": "node --conditions=react-server --env-file=.env.local --import tsx scripts/activity-worker.ts",
+    "x402:agent": "node --env-file=.env.local --env-file-if-exists=.x402/agent.env --import tsx scripts/x402-agent.ts",
+    "test:x402:connected": "node --env-file=.env.local --import tsx scripts/test-x402-connected.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "5.9.1",
+    "@pollar/react": "0.11.5",
+    "@radix-ui/react-slot": "1.4.0",
+    "@reflector/contract-client": "2.2.0",
+    "@stellar/stellar-sdk": "17.2.1",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.3",
+    "@x402/core": "2.28.0",
+    "@x402/fetch": "2.28.0",
+    "@x402/stellar": "2.28.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.55.0",
+    "next": "16.4.0",
+    "next-intl": "4.14.9",
+    "qrcode": "1.5.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "7.89.0",
+    "server-only": "0.0.1",
+    "tailwind-merge": "3.7.0",
+    "three": "0.186.1",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@playwright/test": "1.64.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.6.5",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
+    "prettier": "3.9.10",
+    "supabase": "2.120.0",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "type": "module"
+}

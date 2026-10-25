@@ -1,0 +1,64 @@
+# CityPassport repository audit
+
+Audit date: 2026-10-15. Scope: the existing tracked application, database migrations, configuration, tests and engineering documentation. This is the mandatory first phase of the CityPassport brief, before functional implementation. Existing hosted verification is historical evidence, not a newly executed integration check.
+
+## Product direction
+
+Evolve Iguazú Passport in place into CityPassport: “One passport. Every destination.” The global passport is free; city passes and experiences are optional paid products. Preserve discovery, hotel operations, secure visit claims, localization and the illustrated passport experience. Payment settlement is the first new transactional product priority after identity and destination foundations.
+
+## Repository inventory
+
+| Area | Existing implementation and evidence | Reuse or required change |
+| --- | --- | --- |
+| Stack | `package.json`: Next.js 16.4.0, React/React DOM 19.3.0, TypeScript 7.0.2, Tailwind 4.3.3, next-intl 4.14.9, Supabase JS 2.117.3 and SSR 0.12.7, Zod 4.6.5. Exact versions and lockfile; strict TypeScript. | Keep the stack and App Router server rendering. No Stellar, Pollar, Reflector, Didit or contract dependency exists. |
+| Routing | `src/app/(entry)` redirects into locale routes. `src/app/[locale]` contains discovery, passport, claim, routes, rewards, hotel, precheckin, profile and privacy. `src/proxy.ts` forwards locale and refreshes Supabase cookies. | Extend existing routes with destinations, wallet, checkout, merchant and operator views. Preserve old links. |
+| Authentication | `src/app/actions.ts`, `src/app/auth/callback/route.ts`, `src/lib/supabase/server.ts`: Supabase Google OAuth, PKCE callback, request-scoped SSR cookies, server-side user checks and sign-out. | Pollar Google authentication is a requested change, not an existing feature. Evaluate account linkage before replacing login; existing Supabase user IDs own private data. |
+| Database | Three migrations: foundation, catalog provenance, foreign-key indexes. Public destinations, organizations, members, venues, passports, stamps, claims, routes/stops, hotel reservations/submissions and points ledger. Private invitation/QR credentials, rate limits and audit events. | Additive migrations; retain existing data and ownership. Generate migration names with the CLI. |
+| Authorization | RLS plus explicit grants. `public.passport_command` is an invoker wrapper over an authorized private transactional dispatcher. Membership is stored in PostgreSQL. | Preserve tenant boundaries; add explicit destination assignments and platform roles. An organization role named operator does not implement destination-wide administration. |
+| Passport | `passport_profiles` is unique on `(user_id,destination_id)`; claim foreign keys tie passport and stamp destination together. Passport page queries a fixed destination. | Global identity requires a separate user-unique traveler record and migration strategy for existing destination passports; do not simply remove destination constraints. |
+| Discovery | `src/lib/catalog.ts`: fixed Puerto Iguazú UUID and 15 attributed directory records; `src/lib/data.ts` merges successful database reads with that directory. Editorial itineraries reference those records. | Scope all queries, directory merges and itineraries by destination. Never inject Iguazú listings into other destinations. Empty destinations need honest empty states. |
+| QR and stamps | `ClaimForm` uses BarcodeDetector with native camera/manual fallback. QR secrets are fragment tokens; server actions generate 256-bit secrets; DB stores hashes. DB enforces approved participation, expiry, revocation, limits, duplicate prevention, locks and audit. | Reuse scanner UX and transaction conventions. Visit tokens are distinct from authenticated HTTPS payment-request identifiers. Visit claims cannot prove a purchase. |
+| Loyalty | Immutable points ledger groundwork; no earning or redemption RPC. Rewards page saves explicitly labeled concept interests in browser storage. Route bookmarks are also browser-local. | Do not represent these as purchases, portable achievements or funded rewards. Add verified-action provenance before issuing attestations. |
+| Hotel/business | Hotel onboarding, owner membership, reservations, invitation reissue, guest submission, review/arrival transitions and approved venue QR operations. | Preserve hotel data isolation. No merchant checkout, merchant payment history, wallet configuration, staff-management UI or destination approval portal exists. |
+| UI | Owned Button/ActionForm/AuthGate, guest form, scanner, source listings, stamp detail, lazy Three.js landscape and passport previews. `globals.css` supplies mobile navigation and travel visual language. | Reuse components and progressively extend navigation. Destination imagery and labels currently contain Iguazú literals. |
+| Localization | `messages/{es,en,pt}.json`, next-intl request config and locale routes; dictionary parity tested. | Preserve languages. Branding, metadata, Language aria label, route/place literals and fixed date zones need removal from components during relevant slices. New visible copy belongs in dictionaries. |
+| API surface | OAuth callback GET route plus validated server actions for authentication and passport/hotel/claim commands. Supabase PostgREST/RPC supplies data access. No `src/app/api` directory. | Add narrow payment endpoints with Zod validation, server identity, database authorization and idempotency. |
+| Environment | `.env.example`: Supabase public URL, publishable key and APP_ORIGIN. `.env*` ignored except example. No wallet/provider configuration declared. | Document provider variables when integration is selected. Never expose private keys, seed phrases or service-role keys. Secret values were not read for this audit. |
+| Deployment | Standard Next build/start; security headers in `next.config.ts`; local Supabase CLI config. No checked-in Vercel configuration or GitHub Actions workflow. | Provider callback origins, CSP/provider requirements and reconciliation scheduling need review. No deployment authorized. |
+| Tests | Vitest validation/catalog/itinerary suites; real migrations executed in embedded PGlite; Playwright desktop/mobile public workflows; read-only connected API script and rollback SQL workflow checks. | Extend to destination isolation, global identity, provider linkage, checkout failures and independent-connection settlement races. Public E2E coverage does not establish authenticated payment correctness. |
+
+## Architectural decisions for the next implementation
+
+1. Keep a modular monolith. Introduce destination, identity, wallet, payments and passes modules behind server adapters; browser components must not implement settlement verification.
+2. Make destination selection browse context only. Store countries and destinations in PostgreSQL, with ISO country/currency codes, IANA zones, stable slugs and ES/EN/PT names. Adding a destination must not require a source edit. Existing UUIDs and relations stay valid.
+3. Add one global traveler identity per Supabase user, retaining existing destination passport rows as historical collections initially. Activation becomes idempotent globally. Wallet association belongs to that global identity, not destination selection. Preserve claim ownership and existing ledger references.
+4. Evaluate Pollar first using its official documentation and a real development integration. Prove Google login, existing-account linkage, wallet ownership, signing consent, transaction submission, chain balance and history. Do not assume its identities map to Supabase Auth, or implement custom custody if they do not.
+5. Use a domain-specific checkout lifecycle separate from visit claims: created, authorized, submitted, confirmed, failed and expired, with explicit recovery states where needed. Keep append-only settlement evidence and unique network/transaction correlation. Terminal fulfillment occurs only after independent verification.
+6. Direct payment moves from traveler wallet to a merchant-owned, verified payout address. Freeze merchant, destination, network, asset issuer, amount, fees, nonce, expiry and payer binding before signing. Use exact integer stroops/string serialization rather than floating-point arithmetic. Asset code alone is never sufficient identity.
+7. Resolve checkout details through an authenticated API using opaque HTTPS identifiers. Compare successful ledger inclusion, source, recipient, asset, exact amount and unique correlation against frozen request data. Stellar Expert can provide an explorer receipt link; authoritative ledger verification and reconciliation need a documented network data source. A client callback or explorer link alone cannot establish settlement.
+8. Add payment state transitions through narrow invoker RPC wrappers and private authorized transactions. Lock request rows; constrain idempotency and transaction uniqueness; prevent direct table writes; audit accepted transitions. Delayed confirmations must reconcile safely after request expiry without losing a real payment.
+9. Implement a shared Soroban pass registry only after checkout settlement is verified. Payment confirmation and issuance are separate durable states with idempotent retry and an explicit recovery/refund process. No traveler PII on-chain.
+10. Keep Reflector and Didit behind explicit requirements. USDC direct checkout does not by itself require FX pricing, KYC collection or a new custody model. Evaluate those integrations when a defined business flow needs them.
+
+## Delivery order and acceptance gates
+
+| Slice | Concrete deliverable | Required evidence |
+| --- | --- | --- |
+| 1. Destination foundation | Add country/metadata schema and eight requested destinations; data-backed selector; destination-scoped discovery, routes and dates; ES/EN/PT empty states. Keep Puerto Iguazú links/data. | Unknown slugs rejected; switching cannot mix listings; registry extensible through data; no invented merchants or prices; existing hotel and stamp tests pass. |
+| 2. Global passport | User-unique traveler record linked to existing passport collections; global passport/history UI and idempotent activation. | Existing claims and ledger references preserved; one identity across destination switches; cross-user reads and direct writes denied. |
+| 3. Pollar integration | Documented provider evaluation and verified development login/linkage/sign/receive/balance/history flow through adapters. | Ownership proof, account-linking negative tests, no custody in application storage, configured network and genuine chain reads. |
+| 4. Merchant payment vertical slice | Authorized merchant payout configuration, checkout creation, dynamic QR, traveler approval/signing, independent verification, receipts/history and reconciliation. | Real testnet transfer plus issuer/source/recipient/amount/correlation mismatch denial, expiry, replay, duplicate fulfillment and independent-connection race tests. No mock settlement accepted. |
+| 5. Operator scope | Explicit destination assignments, local listing/merchant approval and experience/catalog management with basic real aggregates. | Cross-destination denial and platform-admin coverage; directory sources never become partnership evidence. |
+| 6. Paid passes and loyalty | Shared registry, issuance recovery, activation/redemption, verified stamps and selected attestations. | Contract authorization/TTL tests, duplicate redemption races, issuance retry after successful payment and observable recovery. |
+| 7. Pilot | Authenticated browser matrix, phones/cameras/accessibility, concurrency, operations and privacy gates. | All required suites plus hosted Supabase and real provider checks. Deployment requires explicit user approval. |
+
+Pilot metadata to provision in slice 1: CR / San José / La Fortuna (San Carlos), AR / Buenos Aires / Puerto Iguazú, BR / Rio de Janeiro / São Paulo, PT / Lisbon / Porto. Currency and time zone are presentation metadata; they must not change checkout settlement assets. Final slugs and metadata should be validated in the migration and application, without fabricating listings for those cities.
+
+## Verification performed for this audit
+
+- `npm run typecheck`: passed.
+- `npm test`: passed, 10 tests across three files.
+- `npm run test:db`: passed, 38 embedded PostgreSQL assertions, including denied access and replay checks.
+- No functional source changes; build and browser suites were not rerun for this documentation-only phase. Historical browser launch limitations remain recorded in VERIFICATION.md.
+- No hosted Supabase query/migration, external provider evaluation, blockchain transaction or deployment performed. No current hosted/provider functionality is implied.
+- Pre-existing working-tree modification to `next-env.d.ts` was preserved.

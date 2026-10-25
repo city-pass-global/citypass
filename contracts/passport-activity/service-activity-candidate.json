@@ -1,0 +1,20 @@
+{
+  "status": "deployed and active in Iguapass development",
+  "network": "testnet",
+  "replacesContractId": "CBU3NMC7UJTHYIHS4HUJAZVVHTQESAYRUV3LMOELAVUZKHTVWGT2DJ2G",
+  "issuer": "GCKLQUFDIXAGOHNS6VIRLLCJP6JGMHCN7Q645GSS2MR73PA7B3KJ3XUM",
+  "wasmSha256": "e1970288ef2221667b13497d99fba9de833d7eb2d1cecccaac113563b4c7c7d9",
+  "wasmBytes": 6210,
+  "eventKinds": {
+    "1": "destination pass: 80 reputation",
+    "2": "QR stamp: no reputation",
+    "4": "first service acquisition: 80 reputation and one stamp",
+    "5": "self-reported exploration stamp: no reputation"
+  },
+  "replay": "Existing canonical outbox records replay to the replacement contract. Existing real exploration claims are backfilled by the migration.",
+  "verification": "Deployed WASM and issuer verified; six real canonical jobs confirmed on the replacement contract, including one exploration stamp; runtime and publisher switched after approval",
+  "deploymentSalt": "795b6bd44fe69efe64f070c4068215cc313dc631329e9d80402b0b21267e944e",
+  "contractId": "CBTPNY2ALTSFDWIUNMVGYOKYLAZT6LWRB4DJWZEL3IKRUFVYQ4ZBR3VS",
+  "uploadTransaction": "dcd53a79bc3c6c3d50f57546a28bac4738d388348191974d13d7eba8e88bae51",
+  "deploymentTransaction": "917289150c386aaf52a0ffa2e6d5252e969efd6f9065807f1ea678398fa2ad9f"
+}

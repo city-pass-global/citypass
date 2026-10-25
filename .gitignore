@@ -1,0 +1,15 @@
+node_modules/
+.next/
+.env*
+!.env.example
+*.tsbuildinfo
+playwright-report/
+test-results/
+supabase/.temp/
+supabase/.branches/
+
+.vercel/
+contracts/**/target/
+.stellar/
+
+.x402/
