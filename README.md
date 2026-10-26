@@ -7,7 +7,7 @@ A multilingual travel passport for discovering destinations, collecting verified
 | Area               | Implementation and evidence                                                                                                                                                                                                              |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Discovery          | Country → city browsing, sourced listings, destination guides, published experiences, and a saved city preference. Listings are discovery references, not partner endorsements.                                                          |
-| Accounts           | Pollar Google login and managed Stellar wallets, with independently verified, database-backed application sessions. Supabase Auth is not the application login.                                                                          |
+| Accounts           | Pollar Google login and managed Stellar wallets, with independently verified, database-backed application sessions. The header shows **Sign in** until that session exists, then the traveler's initials and name. Supabase Auth is not the application login. |
 | Passport           | Global traveler identity, destination collections, authorized QR claims, and an interactive book containing actual collected stamps. Anonymous sample stamps never create records.                                                       |
 | Destination passes | Development offers at exactly 100 **testnet USDC**, one lifetime holding per traveler/city, and +80 non-transferable reputation after independently verified settlement. No venue admission, discount, or redeemable reward is included. |
 | Payments           | Frozen checkout requests, Pollar signing, Stellar verification, durable submission recovery, immutable receipts, and atomic pass fulfillment. A real funded testnet pass purchase was recorded as verified on 2026-10-17.                |
@@ -18,7 +18,11 @@ A multilingual travel passport for discovering destinations, collecting verified
 
 Saved itineraries and reward interests are browser-local. Inquiry screens are retired (404); their private database records and RPC remain. Funded loyalty redemption, refunds, mainnet checkout, automatic route awards, and unattended reconciliation/retention jobs are not implemented. See the [documentation index](docs/README.md) for the complete map.
 
-Status above comes from source inspection on **2026-10-21** and earlier dated verification records. Remote configuration, balances, and historical acceptance were not re-tested during this documentation update. See [verification](docs/VERIFICATION.md) and the [implementation plan](docs/IMPLEMENTATION_PLAN.md).
+Status above comes from source inspection on **2026-10-26** and earlier dated verification records. The hosted check that day confirmed the Supabase setup banner was gone after the public Iguapass settings were added. Pollar was not configured on that deployment, so hosted Google sign-in stayed disabled. Balances and the earlier funded payment were not re-tested. See [verification](docs/VERIFICATION.md) and the [implementation plan](docs/IMPLEMENTATION_PLAN.md).
+
+## Hosted site
+
+Production is [city-pass-global.vercel.app](https://city-pass-global.vercel.app), in the Vercel team **Brandon Fernandez's projects**, project `city-pass-global`. The 2026-10-26 deployment has the public Iguapass URL and publishable key. It does not have Pollar keys, `APP_ORIGIN`, or the activity issuer secret. Google sign-in, wallet signing, and automatic activity publishing are not available on that host. The GitHub repository is not connected to the Vercel project, so a push to `main` does not deploy by itself.
 
 ## Run locally
 
@@ -51,6 +55,7 @@ Use `.env.example` as the variable inventory; keep actual values in ignored `.en
 | `NEXT_PUBLIC_POLLAR_PUBLISHABLE_KEY`   | Pollar application; network follows `pub_testnet_` / `pub_mainnet_` prefix                  | Yes                         |
 | `POLLAR_SECRET_KEY`                    | Server token verification; must match the publishable key's network                         | **No**                      |
 | `POLLAR_SESSION_BRIDGE_KEY`            | 32-byte lowercase hex backend attestation key matching `private.pollar_bridge_config`       | **No**                      |
+| `REFLECTOR_PUBLIC_KEY`                 | Optional simulation account for the testnet euro quote                                  | Yes                         |
 
 No Supabase service-role key is used. Provision the bridge key through trusted administration, never a seed or migration. Allow the exact browser origin and OAuth redirect in Pollar. Changing the Pollar key to mainnet does **not** enable mainnet checkout: the payment implementation explicitly supports testnet only.
 
