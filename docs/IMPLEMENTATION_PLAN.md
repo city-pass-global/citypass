@@ -1,16 +1,17 @@
 # Implementation plan and honest status
 
-## Current reading guide — 2026-10-21
+## Current reading guide — 2026-10-26
 
-Source/documentation review consolidates the status below; it is not a new hosted acceptance run. Earlier milestone checkboxes are historical. For current navigation see [documentation index](README.md), [application flow](APPLICATION_FLOW.md), and [integration inventory](INTEGRATIONS.md).
+Source/documentation review consolidates the status below; it is not a new hosted acceptance run. Earlier milestone checkboxes are historical. For current navigation see [documentation index](README.md), [user flows](USER_FLOWS.md), [technical flows](TECHNICAL_FLOWS.md), [application flow](APPLICATION_FLOW.md), and [integration inventory](INTEGRATIONS.md). The activity sentence below was corrected from [activity operations](ACTIVITY_CONTRACT.md), dated 2026-10-25. This edit did not rerun hosted tests.
 
 - Implemented: Pollar-only login/hashed app sessions, global passport, destination discovery/context, authorized QR claims, private hotel pre-check-in, merchant checkout/review, experience publishing, destination passes, recovery, and receipt-linked reputation.
 - Recorded development acceptance: owner-approved treasury/eight offers, funded testnet pass with independent receipt/award recovery, later passport inspection with two holdings/160 reputation. See the dated 2026-10-17 entries and [VERIFICATION.md](VERIFICATION.md).
 - Retired application feature: inquiry pages/forms/navigation; private records and RPC authorization remain. Earlier inquiry completion entries do not mean screens are still available.
 - Partial integration: Pollar swap configuration/modal and a read-only quote; funded swap execution remains unverified.
-- Not wired: Reflector client is installed with no runtime adapter/feed/quote. Rust activity source is undeployed and unconnected; app activation/reputation remain in PostgreSQL.
-- Pending gates/features: independent-connection concurrency, authenticated multi-user/business acceptance, third-party merchant funded workflow, provider expiry/recovery, unattended reconciliation/retention, refunds, funded rewards, mainnet, and on-chain synchronization. Deployment requires explicit approval.
-- Documentation deliverables: revised README/architecture; application route/flow guide; integration inventory; Stellar, Reflector, swapping, API, development/operations references; corrected superseded authentication and payment status. Documentation-only verification is recorded separately from prior functional test runs.
+- On-chain activity: the testnet passport contract is deployed, and the local worker publishes verified registrations, purchases, and stamps. The passport reads reputation from Stellar. See [activity operations](ACTIVITY_CONTRACT.md).
+- Not wired: Reflector client is installed with no runtime adapter, feed, or quote.
+- Pending gates/features: independent-connection concurrency, authenticated multi-user/business acceptance, third-party merchant funded workflow, provider expiry/recovery, unattended reconciliation/retention, refunds, funded rewards, mainnet, and a funded agent purchase. Deployment requires explicit approval.
+- Documentation deliverables: revised README/architecture; application route/flow guide; user and technical Mermaid flows; integration inventory and diagrams; Stellar, Reflector, swapping, API, development/operations references; corrected superseded authentication and payment status. Documentation-only verification is recorded separately from prior functional test runs.
 
 ## CityPassport evolution — 2026-10-15
 

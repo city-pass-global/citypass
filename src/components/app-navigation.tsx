@@ -2,14 +2,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Compass, BookOpen, Wallet, UserRound, Route, Gift, Store } from 'lucide-react';
+import { Compass, BookOpen, Wallet, UserRound, Route, Gift, Store, LogIn } from 'lucide-react';
 
 export function AppNavigation({
   locale,
   variant,
+  signedIn = false,
 }: {
   locale: string;
   variant: 'desktop' | 'mobile' | 'journey';
+  signedIn?: boolean;
 }) {
   const pathname = usePathname();
   const t = useTranslations();
@@ -34,8 +36,22 @@ export function AppNavigation({
       icon: Wallet,
       active: /^\/(wallet|pay|checkout)(\/|$)/.test(path),
     },
-    { label: t('profile'), href: '/profile', icon: UserRound, active: path === '/profile' },
   ];
+  const account = signedIn
+    ? {
+        label: t('appUi.accountMenu'),
+        href: '/profile',
+        icon: UserRound,
+        active: path === '/profile',
+        state: 'in' as const,
+      }
+    : {
+        label: t('appUi.signIn'),
+        href: '/login',
+        icon: LogIn,
+        active: path === '/login' || path === '/profile',
+        state: 'out' as const,
+      };
   const journey = [
     {
       label: t('exploration.merchants'),
@@ -64,20 +80,28 @@ export function AppNavigation({
   )
     return null;
   const items =
-    variant === 'journey' ? journey : variant === 'desktop' ? primary.slice(0, 4) : primary;
+    variant === 'journey' ? journey : variant === 'desktop' ? primary : [...primary, account];
   return (
     <nav
       className={variant === 'journey' ? 'journey-nav' : `${variant}-nav`}
       aria-label={t(variant === 'journey' ? 'appUi.journeyNavigation' : 'appUi.mainNavigation')}
     >
-      {items.map(({ label, href, icon: Icon, active }) => (
-        <Link key={href} href={`/${locale}${href}`} aria-current={active ? 'page' : undefined}>
-          {variant !== 'desktop' ? (
-            <Icon size={variant === 'mobile' ? 21 : 16} aria-hidden="true" />
-          ) : null}
-          <span>{label}</span>
-        </Link>
-      ))}
+      {items.map((item) => {
+        const { label, href, icon: Icon, active } = item;
+        return (
+          <Link
+            key={href}
+            href={`/${locale}${href}`}
+            aria-current={active ? 'page' : undefined}
+            data-account={'state' in item ? item.state : undefined}
+          >
+            {variant !== 'desktop' ? (
+              <Icon size={variant === 'mobile' ? 21 : 16} aria-hidden="true" />
+            ) : null}
+            <span>{label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

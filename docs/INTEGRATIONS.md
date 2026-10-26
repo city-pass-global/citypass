@@ -1,6 +1,61 @@
 # Integration inventory
 
-Source/package review: 2026-10-21. Versions below are pinned repository versions, not a recommendation to upgrade. Installed package presence alone does not mean a feature is wired or remotely accepted.
+Source/package review: 2026-10-21. Integration diagrams added 2026-10-26 from the same source boundaries. Versions below are pinned repository versions, not a recommendation to upgrade. Installed package presence alone does not mean a feature is wired or remotely accepted. Flow detail is in [technical flows](TECHNICAL_FLOWS.md).
+
+## How the systems connect
+
+```mermaid
+flowchart LR
+  traveler["Traveler browser"] --> next["Next.js"]
+  traveler --> pollar["Pollar"]
+  agent["Agent CLI"] --> next
+  next --> verify["Pollar token verification"]
+  next --> data["Supabase Data API"]
+  data --> pg["PostgreSQL"]
+  next --> stellar["Stellar testnet RPC and Horizon"]
+  worker["Activity worker"] --> pg
+  worker --> contract["Passport activity contract"]
+  next --> facilitator["x402 facilitator"]
+  facilitator --> stellar
+```
+
+Pollar proves Google identity and signs with the managed wallet. Next.js checks that proof, freezes each checkout, and verifies Stellar itself. PostgreSQL stores the authorized business result. The activity contract publishes counters for verified registrations, purchases, and stamps. It does not receive USDC. The facilitator is used only by the agent purchase rail.
+
+Reflector is installed and has no runtime call, so it is not on this path. There is no direct Soroswap SDK and no `SOROSWAP_API_KEY`. Swap venues, when present, are opened through Pollar.
+
+## One pass across the boundaries
+
+```mermaid
+sequenceDiagram
+  participant Traveler
+  participant Pollar
+  participant Next as Next.js
+  participant DB as PostgreSQL
+  participant Stellar as Stellar testnet
+  participant Worker as Activity worker
+  Traveler->>Pollar: Sign in and later approve the frozen payment
+  Pollar-->>Next: Verified identity, then a signed envelope
+  Next->>DB: Session, checkout, receipt, holding, reputation
+  Next->>Stellar: Broadcast and independent lookup
+  DB-->>Worker: Queued purchase
+  Worker->>Stellar: Issuer-signed activity record
+  Next-->>Traveler: Passport reads chain reputation
+```
+
+A balance in Pollar, an explorer link, or a facilitator status does not replace the receipt. The displayed reputation comes from the activity contract after that record confirms. Until then the passport shows the activity as pending or unavailable.
+
+## What stays outside the runtime path
+
+```mermaid
+flowchart TD
+  installed["Installed or documented elsewhere"] --> reflector["Reflector client: no quote"]
+  installed --> ssr["Supabase SSR package: no Auth session"]
+  installed --> venue["Soroswap, DEX, Aquarius SDKs: not imported"]
+  installed --> rewards["Funded reward redemption: not implemented"]
+  pollar["Pollar product surface"] --> unused["Ramps, KYC, bridges, and escrow are not CityPassport features"]
+```
+
+## Package inventory
 
 | Product/package                                  | Current use                                                      | Main source                                           | Verification boundary                                                              |
 | ------------------------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |

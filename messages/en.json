@@ -965,6 +965,9 @@
   "appUi": {
     "mainNavigation": "Main navigation",
     "journeyNavigation": "Explore your journey",
+    "signIn": "Sign in",
+    "signedIn": "Signed in",
+    "accountMenu": "Account",
     "cityGuide": "City guide",
     "authFootnote": "One account for your passport and travel wallet.",
     "profileIntro": "Your journeys, your account. Everything you need for the next chapter.",

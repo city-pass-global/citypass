@@ -1,6 +1,6 @@
 # Application flows and route map
 
-Source reviewed 2026-10-21. Replace `[locale]` with `es`, `en`, or `pt`. Persistent application data lives in Supabase unless explicitly marked browser-local. This is an implemented-flow guide; pilot acceptance limits are in [VERIFICATION.md](VERIFICATION.md).
+Source reviewed 2026-10-21. Account navigation updated 2026-10-26. Replace `[locale]` with `es`, `en`, or `pt`. Persistent application data lives in Supabase unless explicitly marked browser-local. This is an implemented-flow guide; pilot acceptance limits are in [VERIFICATION.md](VERIFICATION.md). Diagrams of the same journeys and server sequences are in [user flows](USER_FLOWS.md) and [technical flows](TECHNICAL_FLOWS.md).
 
 ## Visitor discovery
 
@@ -26,13 +26,13 @@ A city selection filters discovery and workspaces, never grants staff rights. Pa
 
 ## Account and passport
 
-1. Anonymous passport CTAs open `/[locale]/login`. Existing active accounts open their passport; legacy inactive accounts can activate it.
+1. With no application session, the header and the phone navigation say **Sign in** and open `/[locale]/login`. The separate passport button still offers creation, opening, or activation. Existing active accounts open their passport. A known inactive account can activate it. A failed account lookup does not offer creation.
 2. Pollar Google login provisions/restores a managed Stellar wallet. Browser provider state is insufficient for application access.
 3. A server action verifies the token; a database transaction establishes the profile, global traveler, and hashed application session. It does not merge legacy accounts by email.
-4. The page reloads to refresh account-dependent navigation. `/[locale]/passport` shows actual stamps, acquired passes, reputation, and recent purchase recovery.
-5. The stamp book groups verified claims by city, four per page. Anonymous sample animation never counts as a visit. Logout revokes the app session before clearing provider state.
+4. The page reloads. The header then shows the traveler's initials and name, and its menu links to profile, passport, and wallet. `/[locale]/passport` shows actual stamps, acquired passes, chain reputation when the read succeeds, and recent purchase recovery.
+5. The stamp book groups verified claims by city, four per page. Anonymous sample animation never counts as a visit. **Sign out** in the account menu revokes the app session before clearing provider state when Pollar is configured. Without Pollar, the server ends the session and returns to profile.
 
-Database activation and public on-chain activity activation are different. The current app only performs database activation.
+Database passport activation and the public contract registration are different steps. A verified testnet login queues issuer-sponsored registration. The traveler does not sign that transaction. See [activity operations](ACTIVITY_CONTRACT.md).
 
 ## Visit stamp
 
@@ -75,8 +75,10 @@ Experience editors use `/[locale]/operator` and `/[locale]/operator/[id]` throug
 | Route below `/[locale]`                                                  | Purpose/access                                                             |
 | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
 | `/`, `/destinations`, `/destinations/[slug]`, `/explore`                 | Public discovery; registry content requires database configuration         |
+| `/merchants`                                                             | Public venue and service directory; a listing is not a partnership         |
 | `/experiences/[id]`                                                      | Published catalog content; optional external provider link                 |
-| `/login`, `/profile`, `/wallet`                                          | Pollar access, account controls, wallet                                    |
+| `/login`, `/profile`, `/wallet`                                          | Pollar access, account menu, wallet                                        |
+| `/passport/agents`                                                       | Traveler authorization for one agent pass purchase                         |
 | `/passport`, `/claim`                                                    | Global passport and authenticated stamp claims                             |
 | `/routes`, `/rewards`                                                    | Route planning and reward interests; local-only preferences; no redemption |
 | `/hotel`, `/precheckin`                                                  | Tenant-private staff portal; anonymous write-only guest capability         |

@@ -1,11 +1,11 @@
 # Documentation index
 
-Reviewed against the working tree on 2026-10-21. These guides document implemented behavior and label planned integrations. Dated verification logs record earlier runs; a source review does not establish current hosted state.
+Reviewed against the working tree on 2026-10-21. User flows, technical flows, and integration diagrams were added on 2026-10-26 from the implemented routes and adapters. These guides document implemented behavior and label planned integrations. Dated verification logs record earlier runs; a source review does not establish current hosted state.
 
 ## Reading paths
 
-- **Product and application:** [application flows](APPLICATION_FLOW.md) → [PRD](PRD.md) → [implementation status](IMPLEMENTATION_PLAN.md) → [pilot plan](PILOT_PLAN.md).
-- **Developer onboarding:** [root README](../README.md) → [development/operations](DEVELOPMENT.md) → [architecture](ARCHITECTURE.md) → [RPC reference](API_REFERENCE.md).
+- **Product and application:** [user flows](USER_FLOWS.md) → [application flows](APPLICATION_FLOW.md) → [PRD](PRD.md) → [implementation status](IMPLEMENTATION_PLAN.md) → [pilot plan](PILOT_PLAN.md).
+- **Developer onboarding:** [root README](../README.md) → [development/operations](DEVELOPMENT.md) → [architecture](ARCHITECTURE.md) → [technical flows](TECHNICAL_FLOWS.md) → [RPC reference](API_REFERENCE.md).
 - **Stellar and wallet integration:** [integration inventory](INTEGRATIONS.md) → [Pollar identity/wallets](POLLAR_INTEGRATION.md) → [Stellar settlement](STELLAR_INTEGRATION.md) → [swapping](SWAPPING.md) → [Reflector](REFLECTOR_INTEGRATION.md).
 - **Security and data:** [authorization](AUTHORIZATION.md) → [data model](DATA_MODEL.md) → [QR security](QR_SECURITY.md) → [hotel pre-check-in](HOTEL_PRECHECKIN.md).
 
@@ -13,6 +13,8 @@ Reviewed against the working tree on 2026-10-21. These guides document implement
 
 | Document                                              | Scope                                                                         |
 | ----------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [User flows](USER_FLOWS.md)                           | Mermaid journeys for discovery, account, stamps, payments, hotel, and agents  |
+| [Technical flows](TECHNICAL_FLOWS.md)                 | Mermaid sequences for session, claims, checkout, activity, and authorization  |
 | [Destination passes](DESTINATION_PASSES.md)           | Price, reputation, treasury, receipt fulfillment, recovery, contract boundary |
 | [Merchant payments](MERCHANT_PAYMENTS.md)             | Onboarding, payout provenance, checkout, independent evidence                 |
 | [Merchant review](MERCHANT_REVIEW.md)                 | Destination assignments, decisions, versions, replay protection               |

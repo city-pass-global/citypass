@@ -1,6 +1,6 @@
 # Application architecture
 
-Current source review: 2026-10-21. This replaces the original first-milestone architecture. **Pollar is the only application login**; Supabase Auth OAuth/PKCE is retired. Historical verification and remote migration claims live in [VERIFICATION.md](VERIFICATION.md) and [DATABASE_CONNECTION.md](DATABASE_CONNECTION.md).
+Current source review: 2026-10-21. This replaces the original first-milestone architecture. **Pollar is the only application login**; Supabase Auth OAuth/PKCE is retired. Historical verification and remote migration claims live in [VERIFICATION.md](VERIFICATION.md) and [DATABASE_CONNECTION.md](DATABASE_CONNECTION.md). Step-by-step sequences are in [technical flows](TECHNICAL_FLOWS.md); traveler and staff journeys are in [user flows](USER_FLOWS.md).
 
 ## System boundaries
 

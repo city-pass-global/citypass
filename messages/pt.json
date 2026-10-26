@@ -965,6 +965,9 @@
   "appUi": {
     "mainNavigation": "Navegação principal",
     "journeyNavigation": "Explore sua viagem",
+    "signIn": "Entrar",
+    "signedIn": "Sessão iniciada",
+    "accountMenu": "Conta",
     "cityGuide": "Guia da cidade",
     "authFootnote": "Uma conta para seu passaporte e sua carteira de viagem.",
     "profileIntro": "Suas viagens, sua conta. Tudo o que você precisa para o próximo capítulo.",

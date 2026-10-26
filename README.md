@@ -93,7 +93,7 @@ docs/                    Application, integration, security, and operations guid
 
 The optional [x402 agent purchase API](docs/X402.md) adds scoped testnet pass purchases for agents. It is enabled in the approved local development setup; a funded agent purchase remains unverified.
 
-Start with [application flows](docs/APPLICATION_FLOW.md), [architecture](docs/ARCHITECTURE.md), and the [integration inventory](docs/INTEGRATIONS.md).
+Start with [user flows](docs/USER_FLOWS.md), [technical flows](docs/TECHNICAL_FLOWS.md), [architecture](docs/ARCHITECTURE.md), and the [integration inventory](docs/INTEGRATIONS.md).
 
 For the payment stack: [Pollar](docs/POLLAR_INTEGRATION.md), [Stellar settlement](docs/STELLAR_INTEGRATION.md), [swapping](docs/SWAPPING.md), [Reflector](docs/REFLECTOR_INTEGRATION.md), and [destination passes](docs/DESTINATION_PASSES.md). Developers should also read [RPC contracts](docs/API_REFERENCE.md), [data model](docs/DATA_MODEL.md), [authorization](docs/AUTHORIZATION.md), and [development/operations](docs/DEVELOPMENT.md).
 

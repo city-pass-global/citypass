@@ -8,10 +8,11 @@ import { Suspense } from 'react';
 import { getSelectedDestination } from '@/lib/destination-context/server';
 import { getDestinationDirectory } from '@/lib/destinations';
 import { LocaleLinks } from '@/components/locale-links';
-import { UserRound, Leaf, ArrowUpRight } from 'lucide-react';
+import { Leaf, ArrowUpRight } from 'lucide-react';
 import { AppNavigation } from '@/components/app-navigation';
+import { AccountMenu } from '@/components/account-menu';
 import { PassportCta } from '@/components/passport-cta';
-import { configured } from '@/lib/supabase/server';
+import { configured, session } from '@/lib/supabase/server';
 import '../globals.css';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/i18n/routing';
@@ -29,11 +30,12 @@ export default async function Layout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
-  const [t, messages, directory, selected] = await Promise.all([
+  const [t, messages, directory, selected, user] = await Promise.all([
     getTranslations(),
     getMessages(),
     getDestinationDirectory(),
     getSelectedDestination(),
+    session(),
   ]);
   const pathname = (await headers()).get('x-passport-pathname') ?? `/${locale}`;
   const country = countryForPath(
@@ -69,15 +71,13 @@ export default async function Layout({
               <Leaf size={27} />
               <span>{t('globalPassport.brand')}</span>
             </Link>
-            <AppNavigation locale={locale} variant="desktop" />
+            <AppNavigation locale={locale} variant="desktop" signedIn={Boolean(user)} />
             <div className="header-actions">
               <Suspense>
                 <LocaleLinks locale={locale} />
               </Suspense>
               <PassportCta locale={locale} className="header-passport button primary" />
-              <Link className="profile-link" aria-label={t('profile')} href={`/${locale}/profile`}>
-                <UserRound size={20} />
-              </Link>
+              <AccountMenu locale={locale} />
             </div>
           </header>
           {!configured() && <aside className="setup-banner">{t('setup')}</aside>}
@@ -98,7 +98,7 @@ export default async function Layout({
               </Link>
             </div>
           </footer>
-          <AppNavigation locale={locale} variant="mobile" />
+          <AppNavigation locale={locale} variant="mobile" signedIn={Boolean(user)} />
         </NextIntlClientProvider>
       </body>
     </html>
