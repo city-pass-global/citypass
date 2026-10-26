@@ -18,11 +18,13 @@ A multilingual travel passport for discovering destinations, collecting verified
 
 Saved itineraries and reward interests are browser-local. Inquiry screens are retired (404); their private database records and RPC remain. Funded loyalty redemption, refunds, mainnet checkout, automatic route awards, and unattended reconciliation/retention jobs are not implemented. See the [documentation index](docs/README.md) for the complete map.
 
-Status above comes from source inspection on **2026-10-26** and earlier dated verification records. The hosted check that day confirmed the Supabase setup banner was gone after the public Iguapass settings were added. Pollar was not configured on that deployment, so hosted Google sign-in stayed disabled. Balances and the earlier funded payment were not re-tested. See [verification](docs/VERIFICATION.md) and the [implementation plan](docs/IMPLEMENTATION_PLAN.md).
+Status above comes from source inspection on **2026-10-26** and earlier dated verification records. The hosted check that day confirmed the Supabase setup banner was gone after the public Iguapass settings were added. A later deployment the same day added Pollar and the testnet activity contract settings. Balances and the earlier funded payment were not re-tested. See [verification](docs/VERIFICATION.md) and the [implementation plan](docs/IMPLEMENTATION_PLAN.md).
 
 ## Hosted site
 
-Production is [city-pass-global.vercel.app](https://city-pass-global.vercel.app), in the Vercel team **Brandon Fernandez's projects**, project `city-pass-global`. The 2026-10-26 deployment has the public Iguapass URL and publishable key. It does not have Pollar keys, `APP_ORIGIN`, or the activity issuer secret. Google sign-in, wallet signing, and automatic activity publishing are not available on that host. The GitHub repository is not connected to the Vercel project, so a push to `main` does not deploy by itself.
+Production is [city-pass-global.vercel.app](https://city-pass-global.vercel.app), in the Vercel team **Brandon Fernandez's projects**, project `city-pass-global`. The 2026-10-26 production and preview environments include the public Iguapass URL and publishable key, the Pollar publishable key, secret, and session bridge, `APP_ORIGIN` set to that site, `X402_ENABLED`, and the testnet activity network, contract id, issuer secret, and hash key. Development has the same names. Vercel only allows the sensitive flag on Production and Preview, so the Development copies are ordinary encrypted variables; local `npm run dev` still reads `.env.local`. `REFLECTOR_PUBLIC_KEY` and `X402_OZ_API_KEY` are unset because they are empty locally; the euro quote uses its built-in testnet simulation account, and agent checkout uses the public facilitator. `X402_AGENT_SECRET`, `X402_PURCHASE_TOKEN`, and `X402_PURCHASE_URL` belong to an agent machine, not the hosted project.
+
+The activity worker starts beside `npm run dev` and `npm run start`. It does not run as a daemon on Vercel, so automatic publishing of new stamps and purchases stays with a running local app even though the issuer secret is present on the host. Google sign-in still depends on the Pollar dashboard allowing exactly `https://city-pass-global.vercel.app`. The GitHub repository is not connected to the Vercel project, so a push to `main` does not deploy by itself.
 
 ## Run locally
 
@@ -96,7 +98,7 @@ docs/                    Application, integration, security, and operations guid
 
 ## Documentation
 
-The optional [x402 agent purchase API](docs/X402.md) adds scoped testnet pass purchases for agents. It is enabled in the approved local development setup; a funded agent purchase remains unverified.
+The optional [x402 agent purchase API](docs/X402.md) adds scoped testnet pass purchases for agents. It is enabled in the approved local development setup and on the hosted project; a funded agent purchase remains unverified.
 
 Start with [user flows](docs/USER_FLOWS.md), [technical flows](docs/TECHNICAL_FLOWS.md), [architecture](docs/ARCHITECTURE.md), and the [integration inventory](docs/INTEGRATIONS.md).
 
