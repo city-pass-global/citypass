@@ -21,7 +21,7 @@ flowchart LR
 
 Pollar proves Google identity and signs with the managed wallet. Next.js checks that proof, freezes each checkout, and verifies Stellar itself. PostgreSQL stores the authorized business result. The activity contract publishes counters for verified registrations, purchases, and stamps. It does not receive USDC. The facilitator is used only by the agent purchase rail.
 
-Reflector is installed and has no runtime call, so it is not on this path. There is no direct Soroswap SDK and no `SOROSWAP_API_KEY`. Swap venues, when present, are opened through Pollar.
+The testnet fiat Pulse feed supplies a euro reference beside USDC prices. It does not set the charged amount. There is no direct Soroswap SDK and no `SOROSWAP_API_KEY`. Swap venues, when present, are opened through Pollar.
 
 ## One pass across the boundaries
 
@@ -48,7 +48,7 @@ A balance in Pollar, an explorer link, or a facilitator status does not replace 
 
 ```mermaid
 flowchart TD
-  installed["Installed or documented elsewhere"] --> reflector["Reflector client: no quote"]
+  installed["Installed or documented elsewhere"] --> reflector["Reflector Pulse: euro reference only"]
   installed --> ssr["Supabase SSR package: no Auth session"]
   installed --> venue["Soroswap, DEX, Aquarius SDKs: not imported"]
   installed --> rewards["Funded reward redemption: not implemented"]
@@ -64,7 +64,7 @@ flowchart TD
 | Stellar RPC                                      | Account read, broadcast, independent lookup                      | Testnet URL in payment adapter                        | Provider retention/outages limit lookup; no background reconciler                  |
 | Horizon                                          | Buyer/recipient testnet balance and trustline preflight          | Payment adapter and recipient validators              | Snapshot preflight is not settlement proof                                         |
 | StellarExpert                                    | Transaction/ledger evidence links                                | `src/lib/payments/explorer.ts`                        | Navigation aid; never the receipt authority                                        |
-| Reflector client 2.2.0                           | Dependency only                                                  | `package.json`, lockfile                              | No application import, feed, quote, or settlement role                             |
+| Reflector client 2.2.0                           | Testnet fiat Pulse euro reference beside USDC prices            | `src/lib/reflector/`                                  | Display only; does not change the charged USDC amount                             |
 | Stellar DEX / Aquarius / Soroswap                | Provider-configured swap venue choices through Pollar            | `getSwapConfig`, `openSwapModal`                      | No direct venue SDK; available routes/liquidity are provider/network-dependent     |
 | Supabase JS 2.117.3                              | Data API/RPC using publishable key and app capability            | `src/lib/supabase/server.ts`                          | PostgreSQL is application persistence; memberships/RLS authorize data              |
 | Supabase SSR 0.12.7                              | Installed historical dependency                                  | `package.json`                                        | Current custom-session client uses `supabase-js`, not a Supabase SSR OAuth session |

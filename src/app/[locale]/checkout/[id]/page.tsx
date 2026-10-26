@@ -11,6 +11,7 @@ import { AuthGate } from '@/components/auth-gate';
 import { PollarPortal } from '@/components/wallet/pollar-portal';
 import { transactionExplorerUrl, ledgerExplorerUrl } from '@/lib/payments/explorer';
 import Link from 'next/link';
+import { EuroQuote } from '@/components/euro-quote';
 
 function CheckoutShell({
   title,
@@ -73,6 +74,7 @@ export default async function CheckoutPage({
       <p className="checkout-place">{localizedText(checkout.destination_names, locale)}</p>
       <p className="checkout-product">{checkout.product}</p>
       <p className="checkout-amount">{checkout.amount} USDC</p>
+      <EuroQuote amount={checkout.amount} detail />
       <div className="checkout-ticket-stub">
         {checkout.status === 'confirmed' && checkout.receipt ? (
           <div className="checkout-receipt">

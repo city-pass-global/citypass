@@ -1,6 +1,6 @@
 # Reflector integration status and design
 
-Source and installed declaration review: 2026-10-21. **`@reflector/contract-client` 2.2.0 is installed, but Reflector is not called by application code.** There is no feed contract configuration, RPC adapter, quote cache, oracle-driven UI, or oracle-dependent checkout. No live feed was read for this documentation task.
+Source review: 2026-10-26. **`@reflector/contract-client` 2.2.0 reads the testnet fiat Pulse feed to show a euro reference beside a USDC price.** Checkout, pass, and service amounts stay the frozen USDC figures. Beam, Flare, and DAO are not used. A live read on 2026-10-26 confirmed contract `CCSSOHTBL3LEWUCBBEB5NJFC2OKFRC74OWEIJIZLRJBGAAU4VMU5NV4W`, base `USD`, asset `EUR`, 14 decimals, and a 300-second resolution. That read is not a standing price.
 
 ## Intended responsibility
 

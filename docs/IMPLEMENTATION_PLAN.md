@@ -9,7 +9,7 @@ Source/documentation review consolidates the status below; it is not a new hoste
 - Retired application feature: inquiry pages/forms/navigation; private records and RPC authorization remain. Earlier inquiry completion entries do not mean screens are still available.
 - Partial integration: Pollar swap configuration/modal and a read-only quote; funded swap execution remains unverified.
 - On-chain activity: the testnet passport contract is deployed, and the local worker publishes verified registrations, purchases, and stamps. The passport reads reputation from Stellar. See [activity operations](ACTIVITY_CONTRACT.md).
-- Not wired: Reflector client is installed with no runtime adapter, feed, or quote.
+- Reflector: the testnet fiat Pulse feed shows a euro reference beside USDC prices. The charged amount stays the frozen USDC figure. Beam, Flare, and DAO are not used.
 - Pending gates/features: independent-connection concurrency, authenticated multi-user/business acceptance, third-party merchant funded workflow, provider expiry/recovery, unattended reconciliation/retention, refunds, funded rewards, mainnet, and a funded agent purchase. Deployment requires explicit approval.
 - Documentation deliverables: revised README/architecture; application route/flow guide; user and technical Mermaid flows; integration inventory and diagrams; Stellar, Reflector, swapping, API, development/operations references; corrected superseded authentication and payment status. Documentation-only verification is recorded separately from prior functional test runs.
 

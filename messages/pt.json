@@ -62,6 +62,11 @@
   "stamps": "Selos colecionados",
   "signIn": "Continuar com Google",
   "signOut": "Sair",
+  "euro": {
+    "amount": "Cerca de {amount} EUR",
+    "note": "A fonte fiat de teste da Reflector cotiza um euro em dólares americanos. Esta referência não altera os USDC que você paga, e um USDC não equivale a um dólar.",
+    "unavailable": "Referência em euros indisponível."
+  },
   "signInNote": "Explore livremente. Entre quando quiser guardar suas experiências.",
   "setup": "Prévia local de descoberta. A conexão com o Supabase ainda não está configurada.",
   "loginRequired": "Entre para continuar",

@@ -5798,6 +5798,17 @@ select:focus-visible {
 .pass-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
 .pass-summary p { margin: 0; }
 .pass-summary-price { font: 38px/1.1 Georgia, serif; color: #163e35; }
+.euro-quote {
+  margin: 4px 0 0;
+  color: #5d7369;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.euro-quote small {
+  display: block;
+  max-width: 46ch;
+  margin-top: 2px;
+}
 .pass-summary-scope { font-size: 13px; color: #52675e; margin-top: 4px !important; }
 .pass-summary-seal { display: grid; place-items: center; width: 48px; height: 62px; border: 1px solid #b6cec3; border-radius: 3px 10px 10px 3px; color: #163e35; }
 .pass-reputation-award { padding: 6px 10px; border-radius: 20px; background: #e5eddf; color: #163e35; font-size: 12px; }

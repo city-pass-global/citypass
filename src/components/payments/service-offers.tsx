@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { getServiceCatalog } from '@/lib/payments/services-server';
 import { ServiceForm } from './service-form';
+import { EuroNote, EuroQuote } from '@/components/euro-quote';
 export async function ServiceOffers({
   venueId,
   locale,
@@ -40,6 +41,7 @@ export async function ServiceOffers({
           return (
             <section className="merchant-service" key={service.id}>
               <p className="merchant-service-price">{service.amount} USDC</p>
+              <EuroQuote amount={service.amount} />
               {action}
             </section>
           );
@@ -49,6 +51,7 @@ export async function ServiceOffers({
             <h3>{title}</h3>
             {service.seller_source === 'citypass' ? <p>{t('platformScope')}</p> : null}
             <p>{service.amount} USDC</p>
+            <EuroQuote amount={service.amount} />
             <p>{t('award')}</p>
             {action}
             <small>{t('network')}</small>
@@ -57,7 +60,9 @@ export async function ServiceOffers({
       })}
       {!services.length ? (
         <p className="muted">{t(catalog.available ? 'empty' : 'unavailable')}</p>
-      ) : null}
+      ) : (
+        <EuroNote />
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Stamp } from 'lucide-react';
+import { EuroQuote } from '@/components/euro-quote';
 
 export async function PassSummary() {
   const t = await getTranslations('destinationPass');
@@ -10,6 +11,7 @@ export async function PassSummary() {
       </span>
       <div>
         <p className="pass-summary-price">{t('price')}</p>
+        <EuroQuote amount="100" detail />
         <p className="pass-summary-scope">{t('perDestination')}</p>
       </div>
       <span className="pass-reputation-award">{t('awardShort')}</span>

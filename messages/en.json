@@ -62,6 +62,11 @@
   "stamps": "Collected stamps",
   "signIn": "Continue with Google",
   "signOut": "Sign out",
+  "euro": {
+    "amount": "About {amount} EUR",
+    "note": "Reflector’s testnet fiat feed prices one euro in US dollars. This reference does not change the USDC you pay, and one USDC is not one US dollar.",
+    "unavailable": "Euro reference unavailable."
+  },
   "signInNote": "Explore freely. Sign in when you want to save your experiences.",
   "setup": "Local discovery preview. The Supabase connection is not configured yet.",
   "loginRequired": "Sign in to continue",
