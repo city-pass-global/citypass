@@ -1199,6 +1199,7 @@
     "destination": "All destinations",
     "submit": "Search",
     "unconfigured": "The live merchant directory is unavailable until the database is configured.",
+    "ungrouped": "Other listings",
     "results": "{count} merchants and places",
     "signin": "Sign in to collect this stamp",
     "unavailable": "Stamp collection is unavailable. Please try again later."

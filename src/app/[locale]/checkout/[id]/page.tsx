@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
@@ -10,6 +11,24 @@ import { AuthGate } from '@/components/auth-gate';
 import { PollarPortal } from '@/components/wallet/pollar-portal';
 import { transactionExplorerUrl, ledgerExplorerUrl } from '@/lib/payments/explorer';
 import Link from 'next/link';
+
+function CheckoutShell({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="section app-page checkout-page">
+      <header className="checkout-heading">
+        <h1>{title}</h1>
+      </header>
+      <article className="checkout-ticket">{children}</article>
+    </section>
+  );
+}
+
 export default async function CheckoutPage({
   params,
 }: {
@@ -20,20 +39,18 @@ export default async function CheckoutPage({
   const [t, user] = await Promise.all([getTranslations(), session()]);
   if (!user)
     return (
-      <section className="section narrow app-page detail-page">
-        <h1>{t('payments.checkout')}</h1>
+      <CheckoutShell title={t('payments.checkout')}>
         <AuthGate locale={locale} />
-      </section>
+      </CheckoutShell>
     );
   let data;
   try {
     data = await readCheckout(id);
   } catch {
     return (
-      <section className="section narrow app-page detail-page">
-        <h1>{t('payments.checkout')}</h1>
+      <CheckoutShell title={t('payments.checkout')}>
         <p>{t('payments.errors.unavailable')}</p>
-      </section>
+      </CheckoutShell>
     );
   }
   const { checkout } = data;
@@ -48,22 +65,50 @@ export default async function CheckoutPage({
     membership && ['owner', 'manager', 'merchant'].includes(membership.role),
   );
   return (
-    <section className="section narrow app-page detail-page checkout-review">
-      <h1>{t('payments.checkout')}</h1>
+    <CheckoutShell title={t('payments.checkout')}>
+      <p className={`checkout-ticket-status status-${checkout.status}`}>
+        {t(`payments.status.${checkout.status}`)}
+      </p>
       <h2>{checkout.merchant_name}</h2>
-      <p>{localizedText(checkout.destination_names, locale)}</p>
-      <p>{checkout.product}</p>
-      {checkout.merchant_service_id ? (
-        <>
-          {checkout.payout_source === 'citypass' ? (
-            <p>{t('merchantServices.platformScope')}</p>
-          ) : null}
-          <p>{t('merchantServices.award')}</p>
-          <p>{t('merchantServices.network')}</p>
-        </>
-      ) : null}
+      <p className="checkout-place">{localizedText(checkout.destination_names, locale)}</p>
+      <p className="checkout-product">{checkout.product}</p>
       <p className="checkout-amount">{checkout.amount} USDC</p>
-      <details className="pass-details">
+      <div className="checkout-ticket-stub">
+        {checkout.status === 'confirmed' && checkout.receipt ? (
+          <div className="checkout-receipt">
+            <h3>{t('payments.receipt')}</h3>
+            <p>{t('payments.confirmedNote')}</p>
+            <a
+              href={ledgerExplorerUrl(checkout.receipt.network, checkout.receipt.ledger)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('payments.explorerLedger', { ledger: checkout.receipt.ledger })}
+            </a>
+          </div>
+        ) : config?.network === 'testnet' ? (
+          <PollarPortal
+            apiKey={config.apiKey}
+            network={config.network}
+            mode="checkout"
+            checkout={checkout}
+            merchantView={merchantView}
+          />
+        ) : (
+          <p>{t('payments.errors.testnet_only')}</p>
+        )}
+        {checkout.transaction_hash ? (
+          <a
+            className="checkout-explorer"
+            href={transactionExplorerUrl(checkout.network, checkout.transaction_hash)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('payments.explorer')}
+          </a>
+        ) : null}
+      </div>
+      <details className="pass-details checkout-details">
         <summary>
           {t('payments.transactionDetails')}
           <ChevronDown size={17} aria-hidden="true" />
@@ -86,48 +131,16 @@ export default async function CheckoutPage({
           </dd>
         </dl>
       </details>
-      {checkout.transaction_hash ? (
-        <p>
-          <a
-            href={transactionExplorerUrl(checkout.network, checkout.transaction_hash)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('payments.explorer')}
-          </a>
-        </p>
-      ) : null}
-      {checkout.status === 'confirmed' && checkout.receipt ? (
-        <div className="notice">
-          <h3>{t('payments.receipt')}</h3>
-          <p>{t('payments.confirmedNote')}</p>
-          <a
-            href={ledgerExplorerUrl(checkout.receipt.network, checkout.receipt.ledger)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('payments.explorerLedger', { ledger: checkout.receipt.ledger })}
-          </a>
-        </div>
-      ) : config?.network === 'testnet' ? (
-        <PollarPortal
-          apiKey={config.apiKey}
-          network={config.network}
-          mode="checkout"
-          checkout={checkout}
-          merchantView={merchantView}
-        />
-      ) : (
-        <p>{t('payments.errors.testnet_only')}</p>
-      )}
-      <Link className="app-text-link" href={`/${locale}/passport`}>
-        {t('destinationPass.passport')}
-      </Link>
-      {['failed', 'expired'].includes(checkout.status) ? (
-        <Link className="app-text-link" href={`/${locale}/destinations`}>
-          {t('destinationPass.chooseDestination')}
+      <div className="checkout-links">
+        <Link className="app-text-link" href={`/${locale}/passport`}>
+          {t('destinationPass.passport')}
         </Link>
-      ) : null}
-    </section>
+        {['failed', 'expired'].includes(checkout.status) ? (
+          <Link className="app-text-link" href={`/${locale}/destinations`}>
+            {t('destinationPass.chooseDestination')}
+          </Link>
+        ) : null}
+      </div>
+    </CheckoutShell>
   );
 }

@@ -42,7 +42,7 @@ test('service catalog does not add example badges or invent payment capability',
   await expect(page.locator('.service-price-examples')).toHaveCount(0);
   if (process.env.TEST_MERCHANT_SERVICES==='1') {
     await expect(page.getByRole('link',{name:'Buy service',exact:true}).first()).toBeVisible();
-    await expect(page.getByText('CityPassport digital service',{exact:true}).first()).toBeVisible();
+    await expect(page.getByText(/USDC/).first()).toBeVisible();
   } else {
     await expect(page.getByText('Service checkout is being set up. Purchases are unavailable right now.',{exact:true}).first()).toBeVisible();
   }

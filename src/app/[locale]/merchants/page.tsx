@@ -1,13 +1,11 @@
 import { ServiceOffers } from '@/components/payments/service-offers';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { configured, createClient } from '@/lib/supabase/server';
 import { getDestinationDirectory } from '@/lib/destinations';
 import { localizedText, checked } from '@/lib/data';
 import { matchesGuideQuery } from '@/lib/destination-guides';
-import { PageIntro } from '@/components/page-intro';
-import { Store } from 'lucide-react';
+import { Stamp, Store } from 'lucide-react';
 
 const filtersSchema = z.object({
   q: z.string().trim().max(120).catch('').optional(),
@@ -24,9 +22,11 @@ export default async function Merchants({
   const { q = '', destination = '' } = filtersSchema.parse(filters);
   if (!configured())
     return (
-      <section className="section app-page">
-        <h1>{t('exploration.directoryTitle')}</h1>
-        <p>{t('exploration.unconfigured')}</p>
+      <section className="section app-page merchant-directory">
+        <header className="merchant-register-heading">
+          <h1>{t('exploration.directoryTitle')}</h1>
+          <p className="lead">{t('exploration.unconfigured')}</p>
+        </header>
       </section>
     );
   const db = await createClient();
@@ -59,14 +59,26 @@ export default async function Merchants({
         ),
     )
     .sort((a, b) => a.name.localeCompare(b.name, locale));
+  const groups = new Map<string, typeof filtered>();
+  for (const venue of filtered) {
+    const list = groups.get(venue.destination_id);
+    if (list) list.push(venue);
+    else groups.set(venue.destination_id, [venue]);
+  }
+  const cityGroups = [...groups.entries()].sort((a, b) => {
+    const nameA = localizedText(cities.get(a[0])?.names, locale);
+    const nameB = localizedText(cities.get(b[0])?.names, locale);
+    if (!nameA && nameB) return 1;
+    if (nameA && !nameB) return -1;
+    return nameA.localeCompare(nameB, locale);
+  });
   return (
-    <section className="section app-page">
-      <PageIntro
-        title={t('exploration.directoryTitle')}
-        body={t('exploration.directoryBody')}
-        icon={Store}
-      />
-      <form className="directory-search merchant-directory-search" action={`/${locale}/merchants`}>
+    <section className="section app-page merchant-directory">
+      <header className="merchant-register-heading">
+        <h1>{t('exploration.directoryTitle')}</h1>
+        <p className="lead">{t('exploration.directoryBody')}</p>
+      </header>
+      <form className="directory-search merchant-index" action={`/${locale}/merchants`}>
         <label htmlFor="merchant-search">{t('exploration.search')}</label>
         <div>
           <input id="merchant-search" name="q" type="search" maxLength={120} defaultValue={q} />
@@ -84,34 +96,58 @@ export default async function Merchants({
           <button type="submit">{t('exploration.submit')}</button>
         </div>
       </form>
-      <p role="status">{t('exploration.results', { count: filtered.length })}</p>
-      <div className="places">
-        {filtered.map((venue) => (
-          <article className="place" id={`merchant-${venue.id}`} key={venue.id}>
-            <div className="place-copy">
-              <span className="tag">
-                {t(venue.participation_status === 'participating' ? 'participating' : 'listed')}
-              </span>
-              <h2>{venue.name}</h2>
-              <p>{localizedText(venue.description, locale)}</p>
-              <p>{localizedText(cities.get(venue.destination_id)?.names, locale)}</p>
-              {venue.address ? <p>{venue.address}</p> : null}
-              <ServiceOffers locale={locale} venueId={venue.id} />
-              {venue.source_url ? (
-                <a href={venue.source_url} target="_blank" rel="noopener noreferrer">
-                  {t('source')}
-                </a>
-              ) : null}
-              {venue.participation_status === 'participating' ? (
-                <Link className="button outline" href={`/${locale}/claim`}>
-                  {t('exploration.scan')}
-                </Link>
-              ) : null}
-            </div>
-          </article>
-        ))}
+      <p className="merchant-result-count" role="status">
+        {t('exploration.results', { count: filtered.length })}
+      </p>
+      <div className="merchant-ledger">
+        {cityGroups.map(([cityId, cityVenues]) => {
+          const city = cities.get(cityId);
+          const cityName = localizedText(city?.names, locale);
+          return (
+            <section
+              className="merchant-city"
+              data-country={city?.country_code}
+              key={cityId}
+            >
+              <h2>{cityName || t('exploration.ungrouped')}</h2>
+              <div className="merchant-cards">
+                {cityVenues.map((venue) => {
+                  const participating = venue.participation_status === 'participating';
+                  const Icon = participating ? Stamp : Store;
+                  return (
+                    <article
+                      className={`merchant-card${participating ? ' is-participating' : ''}`}
+                      id={`merchant-${venue.id}`}
+                      key={venue.id}
+                    >
+                      <div className="merchant-card-art" aria-hidden="true">
+                        <Icon size={54} strokeWidth={1.2} />
+                        <span className="merchant-card-ring" />
+                      </div>
+                      <div className="merchant-card-copy">
+                        <h3>{venue.name}</h3>
+                        <ServiceOffers compact locale={locale} venueId={venue.id} />
+                        {venue.source_url ? (
+                          <a
+                            className="merchant-source"
+                            href={venue.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {t('source')}
+                          </a>
+                        ) : null}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
       </div>
-      {!filtered.length ? <p>{t('exploration.empty')}</p> : null}
+      {!filtered.length ? <p className="merchant-empty">{t('exploration.empty')}</p> : null}
+      <p className="source-note">{t('destinations.sourceNote')}</p>
     </section>
   );
 }

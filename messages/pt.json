@@ -1199,6 +1199,7 @@
     "destination": "Todos os destinos",
     "submit": "Pesquisar",
     "unconfigured": "O diretório de comércios fica disponível após configurar a base de dados.",
+    "ungrouped": "Outras referências",
     "results": "{count} comércios e lugares",
     "signin": "Inicie sessão para colecionar este carimbo",
     "unavailable": "Não foi possível colecionar o carimbo. Tente novamente mais tarde."

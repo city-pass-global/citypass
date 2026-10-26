@@ -1199,6 +1199,7 @@
     "destination": "Todos los destinos",
     "submit": "Buscar",
     "unconfigured": "El directorio de comercios no está disponible hasta configurar la base de datos.",
+    "ungrouped": "Otras referencias",
     "results": "{count} comercios y lugares",
     "signin": "Inicia sesión para coleccionar este sello",
     "unavailable": "No se puede coleccionar el sello. Inténtalo más tarde."
